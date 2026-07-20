@@ -123,6 +123,12 @@
     color:#b45309;background:#fff7ed;border:1px solid #fed7aa;
     border-radius:4px;padding:1px 6px;
   }
+  .mini-legend{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:6px}
+  .mini-legend span{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--mid)}
+  .mini-legend i{
+    width:10px;height:10px;border-radius:2px;border:1px solid #232323;
+    flex-shrink:0;display:inline-block;
+  }
   .layer-card h3{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:3px}
   .layer-card p{font-size:12px;color:var(--soft)}
 
@@ -259,11 +265,21 @@
         </p>
       </div>
     </div>
-    <div class="layer-card">
+    <div class="layer-card" style="grid-column:1/-1">
       <div class="layer-dot" style="background:#b3b6b8;border:1px solid #232323;box-sizing:border-box"></div>
       <div>
         <h3>Bati_Tampon – BD TOPO® IGN</h3>
-        <p>IGN · 55 658 bâtiments · remplissage gris #B3B6B8, contour #232323</p>
+        <p>IGN · 55 658 bâtiments · catégorisé par usage (USAGE1), contour #232323</p>
+        <div class="mini-legend">
+          <span><i style="background:#ff7f00"></i>Agricole</span>
+          <span><i style="background:#da7c45"></i>Annexe</span>
+          <span><i style="background:#1f78b4"></i>Commercial et services</span>
+          <span><i style="background:#b3b6b8"></i>Indifférencié / non renseigné</span>
+          <span><i style="background:#ffe300"></i>Industriel</span>
+          <span><i style="background:#761a1c"></i>Religieux</span>
+          <span><i style="background:#6dcf43"></i>Résidentiel</span>
+          <span><i style="background:#fe2323"></i>Sportif</span>
+        </div>
       </div>
     </div>
     <div class="layer-card">
