@@ -142,6 +142,7 @@ body{font-family:system-ui,sans-serif;font-size:13px;background:#f0f0f0}
   <label class="layer-toggle"><input type="checkbox" id="chk-commune" checked onchange="toggleLayer('commune')"> Communes</label>
   <label class="layer-toggle"><input type="checkbox" id="chk-carreaux" checked onchange="toggleLayer('carreaux')"> Carreaux 200m</label>
   <label class="layer-toggle" title="Visible à partir du zoom 14"><input type="checkbox" id="chk-bati" onchange="toggleLayer('bati')"> Bâti <span style="font-size:10px;color:#999">(zoom ≥ 14)</span></label>
+  <label class="layer-toggle"><input type="checkbox" id="chk-etab" checked onchange="toggleLayer('etab')"> Établissements scolaires</label>
 
   <button id="toggle-filters" onclick="togglePanel()">⚙ Filtres FILOSOFI</button>
 </div>
@@ -296,6 +297,7 @@ body{font-family:system-ui,sans-serif;font-size:13px;background:#f0f0f0}
     <div class="leg-row"><div class="leg-swatch" style="background:#761a1c"></div> 500 – 1 000 ind.</div>
     <div class="leg-row" style="margin-top:6px"><div class="leg-swatch" style="background:none;border:2px solid #f97316"></div> Commune</div>
     <div class="leg-row"><div class="leg-swatch" style="background:#d97706;opacity:.6"></div> Bâti</div>
+    <div class="leg-row"><div class="leg-swatch" style="background:#7c3aed;border-radius:50%"></div> Établissement scolaire</div>
   </div>
   <!-- Mode filtre actif -->
   <div id="legend-filtre" style="display:none">
@@ -303,6 +305,7 @@ body{font-family:system-ui,sans-serif;font-size:13px;background:#f0f0f0}
     <div class="leg-row"><div class="leg-swatch" style="background:#e11d48;opacity:.2;border-color:#e11d48"></div> Carreau exclu</div>
     <div class="leg-row" style="margin-top:6px"><div class="leg-swatch" style="background:none;border:2px solid #f97316"></div> Commune</div>
     <div class="leg-row"><div class="leg-swatch" style="background:#d97706;opacity:.6"></div> Bâti</div>
+    <div class="leg-row"><div class="leg-swatch" style="background:#7c3aed;border-radius:50%"></div> Établissement scolaire</div>
   </div>
 </div>
 
@@ -352,11 +355,12 @@ function setBasemap(name, btn) {
 /* ═══════════════════════════════════════════
    COUCHES GEOJSON
 ═══════════════════════════════════════════ */
-let communeLayer=null, carreauxLayer=null, batiLayer=null;
+let communeLayer=null, carreauxLayer=null, batiLayer=null, etabLayer=null;
 let allCarreaux=[];
 
 const styleCommune = {color:'#f97316',weight:2.5,fillOpacity:0.05,fillColor:'#f97316'};
 const styleBati = {color:'#92400e',weight:.5,fillOpacity:.55,fillColor:'#d97706'};
+const styleEtab = {radius:5,weight:1.5,color:'#fff',fillColor:'#7c3aed',fillOpacity:.9};
 
 /* Symbolgie densité (FILOSOFI QML) */
 const DENSITY_CLASSES = [
@@ -412,11 +416,20 @@ function popupCarreau(p){
     </table></div>`;
 }
 
+function popupEtab(p){
+  const niveau = p.school_FR ? p.school_FR.charAt(0).toUpperCase()+p.school_FR.slice(1) : null;
+  const addr = [p.addr_street, p.addr_postcode, p.addr_city].filter(Boolean).join(', ');
+  return `<b style="font-size:13px">${p.Name||'Établissement scolaire'}</b><br>
+    ${niveau?`<span style="color:#7c3aed;font-weight:600">${niveau}</span><br>`:''}
+    ${addr?`<span style="color:#555;font-size:11px">${addr}</span><br>`:''}
+    ${p.phone?`<span style="color:#555;font-size:11px">${p.phone}</span>`:''}`;
+}
+
 /* Chargement */
 let loaded=0;
 function onLoad(){
   loaded++;
-  if(loaded===2){ // commune + carreaux (bati chargé séparément)
+  if(loaded===3){ // commune + carreaux + établissements (bati chargé séparément)
     document.getElementById('loader').style.display='none';
     if(carreauxLayer) map.fitBounds(carreauxLayer.getBounds(),{padding:[50,50]});
   }
@@ -441,6 +454,17 @@ fetch('carreaux.geojson').then(r=>r.json()).then(data=>{
     onEachFeature:(f,l)=>l.bindPopup(popupCarreau(f.properties))
   }).addTo(map);
   updateCount(allCarreaux.length,allCarreaux.length);
+  onLoad();
+});
+
+fetch('etablissements.geojson')
+  .then(r=>r.arrayBuffer())
+  .then(buf=>JSON.parse(new TextDecoder('utf-8').decode(buf)))
+  .then(data=>{
+  etabLayer=L.geoJSON(data,{
+    pointToLayer:(f,latlng)=>L.circleMarker(latlng,styleEtab),
+    onEachFeature:(f,l)=>l.bindPopup(popupEtab(f.properties))
+  }).addTo(map);
   onLoad();
 });
 
@@ -505,6 +529,9 @@ function toggleLayer(name){
       if(batiLayer && map.hasLayer(batiLayer)) batiLayer.remove();
       map.off('zoomend', updateBatiVisibility);
     }
+  } else if(name==='etab'){
+    if(!etabLayer) return;
+    document.getElementById('chk-etab').checked ? etabLayer.addTo(map) : etabLayer.remove();
   }
 }
 
