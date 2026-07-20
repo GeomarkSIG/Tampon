@@ -109,6 +109,20 @@
   .layer-dot{
     width:12px;height:12px;border-radius:3px;flex-shrink:0;margin-top:4px;
   }
+  .layer-dot.outline{background:transparent;border:2px solid #232323;box-sizing:border-box}
+  .layer-dot.grad{
+    width:30px;border-radius:3px;
+    background:linear-gradient(90deg,#fdbf6f 0 20%,#ff7f00 20% 40%,#fb9a99 40% 60%,#e31a1c 60% 80%,#761a1c 80% 100%);
+  }
+  .layer-dot.point{
+    width:12px;height:12px;border-radius:50%;background:#475569;
+    box-shadow:0 0 0 2px #fff,0 0 0 3px #475569;
+  }
+  .layer-card .tag-generic{
+    display:inline-block;margin-top:4px;font-size:10px;font-weight:600;
+    color:#b45309;background:#fff7ed;border:1px solid #fed7aa;
+    border-radius:4px;padding:1px 6px;
+  }
   .layer-card h3{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:3px}
   .layer-card p{font-size:12px;color:var(--soft)}
 
@@ -229,27 +243,43 @@
 <!-- COUCHES -->
 <section class="section" id="couches" style="padding-top:0">
   <div class="section-tag">Données</div>
-  <h2>Trois couches géographiques</h2>
+  <h2>Quatre couches géographiques</h2>
+  <p class="section-sub" style="margin-bottom:20px">Légende reprenant la symbologie du projet QGIS (Projet_Tampon.qgz).</p>
   <div class="layers">
     <div class="layer-card">
-      <div class="layer-dot" style="background:#1d4ed8"></div>
+      <div class="layer-dot grad"></div>
       <div>
-        <h3>Carreaux 200 m – FILOSOFI 2021</h3>
-        <p>INSEE · 1 651 entités · 34 attributs sociaux et fiscaux · WGS84</p>
+        <h3>Carreau_200m_Tampon – Densité FILOSOFI 2021</h3>
+        <p>INSEE · 1 651 entités · dégradé par nombre d'individus (ind.) :
+          1–10 <span style="color:#fdbf6f;font-weight:700">■</span>,
+          10–100 <span style="color:#ff7f00;font-weight:700">■</span>,
+          100–200 <span style="color:#fb9a99;font-weight:700">■</span>,
+          200–500 <span style="color:#e31a1c;font-weight:700">■</span>,
+          500–1000 <span style="color:#761a1c;font-weight:700">■</span>
+        </p>
       </div>
     </div>
     <div class="layer-card">
-      <div class="layer-dot" style="background:#d97706"></div>
+      <div class="layer-dot" style="background:#b3b6b8;border:1px solid #232323;box-sizing:border-box"></div>
       <div>
-        <h3>Bâti – BD TOPO® IGN</h3>
-        <p>IGN · 55 658 bâtiments · Nature, usage, étages, hauteur</p>
+        <h3>Bati_Tampon – BD TOPO® IGN</h3>
+        <p>IGN · 55 658 bâtiments · remplissage gris #B3B6B8, contour #232323</p>
       </div>
     </div>
     <div class="layer-card">
-      <div class="layer-dot" style="background:#f97316"></div>
+      <div class="layer-dot outline"></div>
       <div>
-        <h3>Communes – Admin Express IGN</h3>
-        <p>IGN · 25 communes · Population, codes INSEE</p>
+        <h3>Commune_Tampon – Admin Express IGN</h3>
+        <p>IGN · 25 communes · sans remplissage, contour #232323</p>
+      </div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-dot point"></div>
+      <div>
+        <h3>Etablissement_scolaire_Tampon</h3>
+        <p>Établissements scolaires · symbole ponctuel générique
+          <span class="tag-generic">à intégrer</span>
+        </p>
       </div>
     </div>
   </div>
